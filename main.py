@@ -22,25 +22,25 @@ def request_user_data(did: str, most_recent_timestamp: datetime.datetime):
     all_posts = []
     cursor = None
     number_of_requests = 0
-    while True:
+    all_posts_fetched = False
+    while not all_posts_fetched:
+        number_of_requests += 1
         url = f"https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor={did}&limit=100"
         if cursor:
             url += f"&cursor={cursor}"
-        response = requests.get(url)
-        data = response.json()
+        data = requests.get(url).json()
         posts = data["feed"]
         for post in posts:
-            # if the post is older than the most recent cached post id, return all posts, timestamp uses ISO 8601 format
+            # if the post is older than the most recent cached post id, return all posts
             post_timestamp = datetime.datetime.fromisoformat(post["post"]["indexedAt"])
             if most_recent_timestamp and post_timestamp <= most_recent_timestamp:
+                all_posts_fetched = True
                 break
             all_posts.append(post)
         cursor = data.get("cursor")
-        if not cursor:
-            print("WARNING NO CURSOR")
-            break
-        number_of_requests += 1
-        time.sleep(1)  # to avoid rate limiting
+        
+        if not all_posts_fetched:
+            time.sleep(1)  # to avoid rate limiting
     print(f"Number of requests made: {number_of_requests}")
     return all_posts
 
