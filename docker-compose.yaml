@@ -1,0 +1,7 @@
+services:
+  bluesky-archive:
+    build: .
+    container_name: bluesky-archive
+    volumes:
+      - ./:/app
+    command: python3 main.py densinium.bsky.social
