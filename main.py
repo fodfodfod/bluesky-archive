@@ -46,6 +46,16 @@ def request_user_data(did: str, most_recent_timestamp: datetime.datetime):
 
 
 def process_user(did: str):
+    # get profile
+    url = f"https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={did}"
+    profile_data = requests.get(url).json()
+    handle = profile_data.get("handle", "")
+    with open(f"user_data/{did}/user_data.json", "rw") as file:
+        user_profile_history: list = json.load(file)
+        user_profile_history.insert(0, profile_data)
+        json.dump(user_profile_history, file, indent=4)
+    
+    #get posts
     data = load_user_data_from_file(did)
     if data:
         most_recent_cached_post_timestamp = datetime.datetime.fromisoformat(data[0]["post"]["indexedAt"])
@@ -53,7 +63,7 @@ def process_user(did: str):
         most_recent_cached_post_timestamp = None
     new_posts = request_user_data(did, most_recent_cached_post_timestamp)
     if new_posts:
-        print(f"Found {len(new_posts)} new posts for user {did}")
+        print(f"Found {len(new_posts)} new posts for user {handle}, {did}")
         # prepend new posts to data
         data = new_posts + data
         # save data to file, creating the folder if it does not exist
