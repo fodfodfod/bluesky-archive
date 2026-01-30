@@ -46,12 +46,18 @@ def request_user_data(did: str, most_recent_timestamp: datetime.datetime):
 
 
 def process_user(did: str):
+    os.makedirs(f"user_data/{did}", exist_ok=True)
     # get profile
     url = f"https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={did}"
     profile_data = requests.get(url).json()
     handle = profile_data.get("handle", "")
-    with open(f"user_data/{did}/user_data.json", "rw") as file:
-        user_profile_history: list = json.load(file)
+    with open(f"user_data/{did}/user_data.json", "w+") as file:
+        raw_file = file.read()
+        if raw_file:
+            user_profile_history = json.load(file)
+        else:
+            user_profile_history = []
+
         user_profile_history.insert(0, profile_data)
         json.dump(user_profile_history, file, indent=4)
     
@@ -66,12 +72,11 @@ def process_user(did: str):
         print(f"Found {len(new_posts)} new posts for user {handle}, {did}")
         # prepend new posts to data
         data = new_posts + data
-        # save data to file, creating the folder if it does not exist
-        os.makedirs(f"user_data/{did}", exist_ok=True)
+        # save data to file
         with open(f"user_data/{did}/posts.json", "w") as file:
             json.dump(data, file, indent=4)
     else:
-        print(f"No new posts for user {did}")
+        print(f"No new posts for user {handle}, {did}")
 
 
 if __name__ == "__main__":
