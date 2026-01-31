@@ -18,7 +18,13 @@ def _load_user_data_from_file(did: str):
     return []
 
 def _request_user_data(did: str, most_recent_timestamp: datetime.datetime):
-    # request user data from the API in 100 block messages, until the most recent cached post id is reached
+    """
+    Request user data from the Bluesky API, handling pagination.
+
+    :param did: The DID of the user to fetch posts for.
+    :param most_recent_timestamp: The timestamp of the most recent cached post.
+    :return: A list of new posts.
+    """
     all_posts = []
     cursor = None
     number_of_requests = 0
@@ -46,6 +52,11 @@ def _request_user_data(did: str, most_recent_timestamp: datetime.datetime):
 
 
 def process_user(did: str):
+    """
+    Process a user by fetching their profile and posts, and saving them to files. Uses saved posts to minimize API calls.
+    
+    :param did: The DID of the user to process.
+    """
     os.makedirs(f"user_data/{did}", exist_ok=True)
     # get profile
     url = f"https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={did}"
