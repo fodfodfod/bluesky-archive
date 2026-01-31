@@ -4,6 +4,9 @@ A tool to archive all posts and images from bluesky users
 ## Instalation
 ### Docker compose
 Clone the repo.
+Add usernames to `user_data/add_list.txt`
+
+
 Run
 ```sh
 docker compose up
