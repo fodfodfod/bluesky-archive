@@ -11,6 +11,8 @@ if __name__ == "__main__":
         with open("user_data/add_list.txt", "r") as file:
             for line in file:
                 name = line.strip()
+                if line.startswith("#") or not line:
+                    continue
                 did = ensure_did(name)
                 if did:
                     if os.path.exists(f"user_data/{did}"):
@@ -20,11 +22,9 @@ if __name__ == "__main__":
                 else:
                     print(f"Could not resolve DID for {name}")
     except FileNotFoundError:
-        # if no file, check for command line argument
-        if len(sys.argv) < 2:
-            print("Usage: python main.py <username_or_did>")
-            print("Or create a user_data/add_list.txt file with one username or DID per line.")
-            sys.exit(1)
+        print("No add_list.txt file found")
+
+    if len(sys.argv) == 2:
         name = sys.argv[1]
         did = ensure_did(name)
         if did:
@@ -35,3 +35,13 @@ if __name__ == "__main__":
                 os.makedirs(f"user_data/{did}", exist_ok=True)
         else:
             print(f"Could not resolve DID for {name}")
+
+
+    #process all users
+    for did in os.listdir("user_data"):
+        if os.path.isdir(f"user_data/{did}"):
+            try:
+                print(f"Processing user: {did}")
+                process_user(did)
+            except Exception as e:
+                print(f"Error processing user {did}: {e}")

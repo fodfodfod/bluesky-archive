@@ -2,11 +2,13 @@
 All users will be referenced internally by their did to ensure data is kept with the right account, only converting to handle or display name when being shown to the user. 
 ```
 user_data
-├── posts.json
-├── user_data.json
 ├── add_list.txt
-└── embeds
-    └── image0.jpeg
+└── did:plc:thisistotallyarealdid
+    ├── posts.json
+    ├── user_data.json
+    ├── download_list.txt
+    └── embeds
+        └── image0.jpeg
 ```
 
 posts.json contains an array of dictionaries. Each dictionary will have one post and possibly a reply. These are based on the data returned by [app.bsky.feed.getAuthorFeed](https://docs.bsky.app/docs/api/app-bsky-feed-get-author-feed), which I think is based on the AT Protocol. Sample post:
@@ -83,4 +85,6 @@ posts.json contains an array of dictionaries. Each dictionary will have one post
 
 user_data.json stores extra info about a user. It pulls from [app.bsky.actor.getProfile](https://docs.bsky.app/docs/api/app-bsky-actor-get-profile). It is stored as an array and everytime a request is performed the new data is appended. 
 
-add_list.txt is a list of users to add to the archiver. Each line should be one user, either a did or handle.
+add_list.txt is a list of users to add to the archiver. Each line should be one user, either a did or handle. Comment lines start with `#`
+
+download_list.txt contains that images that need to be download for that user

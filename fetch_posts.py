@@ -83,6 +83,16 @@ def process_user(did: str):
         print(f"Found {len(new_posts)} new posts for user {handle}, {did}")
         # prepend new posts to data
         data = new_posts + data
+        # check if there are images in the posts and add them to the download list
+        for post in new_posts:
+            if "embed" in post["post"]:
+                embed = post["post"]["embed"]
+                if "images" in embed:
+                    with open(f"user_data/{did}/download_list.txt", "a") as download_file:
+                        for image in embed["images"]:
+                            image_url = image["fullsize"]
+                            download_file.write(f"{image_url}\n")
+                        
         # save data to file
         with open(f"user_data/{did}/posts.json", "w") as file:
             json.dump(data, file, indent=4)
