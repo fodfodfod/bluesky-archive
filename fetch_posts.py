@@ -62,14 +62,20 @@ def process_user(did: str):
     url = f"https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={did}"
     profile_data = requests.get(url).json()
     handle = profile_data.get("handle", "")
-    with open(f"user_data/{did}/user_data.json", "w+") as file:
-        raw_file = file.read()
-        if raw_file:
-            user_profile_history = json.load(file)
-        else:
+    
+    # Load existing profile history if it exists
+    user_profile_history = []
+    user_data_file = f"user_data/{did}/user_data.json"
+    if os.path.exists(user_data_file):
+        try:
+            with open(user_data_file, "r") as file:
+                user_profile_history = json.load(file)
+        except (json.JSONDecodeError, IOError):
             user_profile_history = []
-
-        user_profile_history.insert(0, profile_data)
+    
+    # Add new profile data and save
+    user_profile_history.insert(0, profile_data)
+    with open(user_data_file, "w") as file:
         json.dump(user_profile_history, file, indent=4)
     
     #get posts
