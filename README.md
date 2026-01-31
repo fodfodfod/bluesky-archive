@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 Run the app
 ```sh
-python main.py [username or did]
+python main.py
 ```
 
 ## Data Structure

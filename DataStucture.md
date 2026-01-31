@@ -4,6 +4,7 @@ All users will be referenced internally by their did to ensure data is kept with
 user_data
 ├── posts.json
 ├── user_data.json
+├── add_list.txt
 └── embeds
     └── image0.jpeg
 ```
@@ -81,3 +82,5 @@ posts.json contains an array of dictionaries. Each dictionary will have one post
 ```
 
 user_data.json stores extra info about a user. It pulls from [app.bsky.actor.getProfile](https://docs.bsky.app/docs/api/app-bsky-actor-get-profile). It is stored as an array and everytime a request is performed the new data is appended. 
+
+add_list.txt is a list of users to add to the archiver. Each line should be one user, either a did or handle.
