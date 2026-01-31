@@ -7,6 +7,7 @@ import sys
 
 if __name__ == "__main__":
     #see if any users need to be added
+    print("Hello world!")
     try:
         with open("user_data/add_list.txt", "r") as file:
             for line in file:
@@ -36,7 +37,7 @@ if __name__ == "__main__":
         else:
             print(f"Could not resolve DID for {name}")
 
-
+    print("Starting to process all users...")
     #process all users
     for did in os.listdir("user_data"):
         if os.path.isdir(f"user_data/{did}"):

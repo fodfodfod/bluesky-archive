@@ -44,7 +44,7 @@ def _request_user_data(did: str, most_recent_timestamp: datetime.datetime):
                 break
             all_posts.append(post)
         cursor = data.get("cursor")
-        
+        print(f"Fetched {len(posts)} posts, total so far: {len(all_posts)}, did: {did}")
         if not all_posts_fetched:
             time.sleep(1)  # to avoid rate limiting
     print(f"Number of requests made: {number_of_requests}")
