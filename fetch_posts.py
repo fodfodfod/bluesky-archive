@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 import time
+import logging
 from util import ensure_did
 
 
@@ -25,6 +26,7 @@ def _request_user_data(did: str, most_recent_timestamp: datetime.datetime):
     :param most_recent_timestamp: The timestamp of the most recent cached post.
     :return: A list of new posts.
     """
+    logger = logging.getLogger("main")
     all_posts = []
     cursor = None
     number_of_requests = 0
@@ -44,10 +46,10 @@ def _request_user_data(did: str, most_recent_timestamp: datetime.datetime):
                 break
             all_posts.append(post)
         cursor = data.get("cursor")
-        print(f"Fetched {len(posts)} posts, total so far: {len(all_posts)}, did: {did}")
+        logger.debug(f"Fetched {len(posts)} posts, total so far: {len(all_posts)}, did: {did}")
         if not all_posts_fetched:
             time.sleep(1)  # to avoid rate limiting
-    print(f"Number of requests made: {number_of_requests}")
+    logger.info(f"Number of requests made: {number_of_requests}")
     return all_posts
 
 
@@ -57,6 +59,7 @@ def process_user(did: str):
     
     :param did: The DID of the user to process.
     """
+    logger = logging.getLogger("main")
     os.makedirs(f"user_data/{did}", exist_ok=True)
     # get profile
     url = f"https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={did}"
@@ -86,7 +89,7 @@ def process_user(did: str):
         most_recent_cached_post_timestamp = None
     new_posts = _request_user_data(did, most_recent_cached_post_timestamp)
     if new_posts:
-        print(f"Found {len(new_posts)} new posts for user {handle}, {did}")
+        logger.info(f"Found {len(new_posts)} new posts for user {handle}, {did}")
         # prepend new posts to data
         data = new_posts + data
         # check if there are images in the posts and add them to the download list
@@ -103,4 +106,4 @@ def process_user(did: str):
         with open(f"user_data/{did}/posts.json", "w") as file:
             json.dump(data, file, indent=4)
     else:
-        print(f"No new posts for user {handle}, {did}")
+        logger.info(f"No new posts for user {handle}, {did}")
