@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 COPY main.py .
 COPY fetch_posts.py .
 COPY util.py .
+COPY fetch_media.py .
 COPY requirements.txt .
 
 

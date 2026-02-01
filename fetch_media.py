@@ -26,10 +26,12 @@ def _download_image(url: str) -> int:
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            image_owner_did = url.split("/")[4]
+            image_owner_did = url.split("/")[6]
             directory = f"user_data/{image_owner_did}/embed/"
             os.makedirs(directory, exist_ok=True)
-            with open(os.path.join(directory, _generate_filename_from_url(url)), "wb") as file:
+            file_path = os.path.join(directory, _generate_filename_from_url(url))
+            logging.debug(f"Saving image to {file_path}")
+            with open(file_path, "wb") as file:
                 file.write(response.content)
             logger.info(f"Downloaded image from {url}")
             return 200
@@ -74,10 +76,13 @@ def download_user_media(did: str):
             status = _download_image(url)
             if status == 200:
                 # remove from download list
+                logging.debug(f"{url} worked, tryint to remove from download list")
                 with open(download_list_file, "w") as file:
+                    logging.debug("file opened for writing")
                     lines = file.readlines()
                     lines = [line for line in lines if line.strip() != url]
                     file.writelines(lines)
+                    logging.debug("file rewritten without downloaded url")
                 break
             elif status == 429:
                 wait_time = 2 ** retries
