@@ -2,6 +2,8 @@ FROM python:3
 
 WORKDIR /app
 
+ENV PYTHONUNBUFFERED=1
+
 COPY main.py .
 COPY fetch_posts.py .
 COPY util.py .
