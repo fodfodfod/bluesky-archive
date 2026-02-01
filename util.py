@@ -1,4 +1,6 @@
 import requests
+import json
+import logging
 
 def ensure_did(name: str) -> str:
     """
@@ -19,3 +21,31 @@ def ensure_did(name: str) -> str:
             print(f"Error resolving handle to DID: {e}")
             return None
     return name
+
+def did_to_username(did: str, local_only: bool = True) -> str:
+    """
+    Convert a DID to a username. If local_only is True, only return the local part of the DID.
+    
+    :param did: The DID to convert
+    :param local_only: Whether to only use cached data or fetch from the API
+    :return: The username or an empty string if conversion fails
+    """
+    logger = logging.getLogger("main")
+    try:
+        with open(f"user_data/{did}/user_info.json", "r") as file:
+            data = json.load(file)[0] # everytime profile data is pulled the new data it put at index 0
+            handle = data["handle"]
+            return handle
+    except:
+        if local_only:
+            return ""
+        # fetch from API
+        url = f"https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={did}"
+        try:
+            response = requests.get(url)
+            data = response.json()
+            handle = data.get("handle", "")
+            return handle
+        except Exception as e:
+            logger.error(f"Error converting DID to username. DID: {did}, Error: {e}")
+            return ""

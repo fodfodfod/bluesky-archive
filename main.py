@@ -1,13 +1,16 @@
 #curl https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=densinium.bsky.social
 import logging
 import os
+import fetch_media
 import fetch_posts
 import util
 import sys
 import time
 
 
-if __name__ == "__main__":
+
+
+def main():
     #see if any users need to be added
     # os.makedirs("user_data/testing", exist_ok=True)
 
@@ -58,3 +61,21 @@ if __name__ == "__main__":
                 fetch_posts.process_user(did)
             except Exception as e:
                 logger.error(f"Error processing user {did}: {e}")
+    
+    logger.info("Users post fetching complete.")
+    logger.info("Fetching media files...")
+
+    for did in os.listdir("user_data"):
+        if os.path.isdir(f"user_data/{did}"):
+            try:
+                fetch_media.download_user_media(did)
+            except Exception as e:
+                logger.error(f"Error downloading media for user {did}: {e}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        logging.critical(f"Unhandled exception: {e}\nScript terminating.")
+        sys.exit(1)
