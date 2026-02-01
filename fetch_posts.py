@@ -44,6 +44,11 @@ def _request_user_data(did: str, most_recent_timestamp: datetime.datetime):
             if most_recent_timestamp and post_timestamp <= most_recent_timestamp:
                 all_posts_fetched = True
                 break
+            # check if the post is already in the all_posts list (to ensure we don't keep requesting the same posts as it seems like the cursor keeps being returned)
+            if post in all_posts:
+                all_posts_fetched = True
+                logger.debug(f"Duplicate post found, ending fetch early for did: {did}")
+                break
             all_posts.append(post)
         cursor = data.get("cursor")
         logger.debug(f"Fetched {len(posts)} posts, total so far: {len(all_posts)}, did: {did}")
