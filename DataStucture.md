@@ -1,5 +1,7 @@
 # Data Structure
 All users will be referenced internally by their did to ensure data is kept with the right account, only converting to handle or display name when being shown to the user. 
+
+Images will be stored in the folder of the owner of the image, not the person who's post prompted the download. If the owner is not being archived, the image will not be saved. 
 ```
 user_data
 ├── add_list.txt

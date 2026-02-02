@@ -16,6 +16,10 @@ def main():
 
     logger = logging.getLogger("main")
     logger.setLevel(logging.DEBUG)
+    #set log string
+    logger_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    for handler in logger.handlers:
+        handler.setFormatter(logger_formatter)
     logger.addHandler(logging.StreamHandler())
     logger.addHandler(logging.FileHandler("logs/main.log"))
 

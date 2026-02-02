@@ -65,6 +65,11 @@ def download_user_media(did: str):
     
     max_retries = 5
     for url in urls:
+        # ensure the did is for a user being archived
+        image_owner_did = url.split("/")[6]
+        if not os.path.exists(f"user_data/{image_owner_did}"):
+            logger.info(f"Image owner DID {image_owner_did} not found in archive, skipping download for {url}.")
+            continue
         # make sure the image isn't already downloaded
         filename = os.path.join(f"user_data/{did}/embed/", _generate_filename_from_url(url))
         if os.path.exists(filename):
@@ -77,10 +82,13 @@ def download_user_media(did: str):
             if status == 200:
                 # remove from download list
                 logging.debug(f"{url} worked, tryint to remove from download list")
-                with open(download_list_file, "w") as file:
+                with open(download_list_file, "r+") as file:
                     logging.debug("file opened for writing")
                     lines = file.readlines()
                     lines = [line for line in lines if line.strip() != url]
+                    # move file pointer to beginning
+                    file.seek(0)
+                    file.truncate()
                     file.writelines(lines)
                     logging.debug("file rewritten without downloaded url")
                 break
