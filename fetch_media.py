@@ -46,6 +46,19 @@ def _download_image(url: str) -> int:
         logger.error(f"Failed to download image from {url}: {e}")
         return -1
     
+def _remove_url_from_download_list(download_list_file: str, url: str):
+    # remove from download list
+    logging.debug(f"{url} worked, tryint to remove from download list")
+    with open(download_list_file, "r+") as file:
+        logging.debug("file opened for writing")
+        lines = file.readlines()
+        lines = [line for line in lines if line.strip() != url]
+        # move file pointer to beginning
+        file.seek(0)
+        file.truncate()
+        file.writelines(lines)
+        logging.debug("file rewritten without downloaded url")
+
 def download_user_media(did: str):
     """
     Download all media files generated from a user based on their download list.
@@ -69,28 +82,20 @@ def download_user_media(did: str):
         image_owner_did = url.split("/")[6]
         if not os.path.exists(f"user_data/{image_owner_did}"):
             logger.info(f"Image owner DID {image_owner_did} not found in archive, skipping download for {url}.")
+            _remove_url_from_download_list(download_list_file, url)
             continue
         # make sure the image isn't already downloaded
         filename = os.path.join(f"user_data/{did}/embed/", _generate_filename_from_url(url))
         if os.path.exists(filename):
             logger.warning(f"Image {filename} already exists, skipping download.")
+            _remove_url_from_download_list(download_list_file, url)
             continue
 
         retries = 0
         while retries < max_retries:
             status = _download_image(url)
             if status == 200:
-                # remove from download list
-                logging.debug(f"{url} worked, tryint to remove from download list")
-                with open(download_list_file, "r+") as file:
-                    logging.debug("file opened for writing")
-                    lines = file.readlines()
-                    lines = [line for line in lines if line.strip() != url]
-                    # move file pointer to beginning
-                    file.seek(0)
-                    file.truncate()
-                    file.writelines(lines)
-                    logging.debug("file rewritten without downloaded url")
+                _remove_url_from_download_list(download_list_file, url)
                 break
             elif status == 429:
                 wait_time = 2 ** retries
