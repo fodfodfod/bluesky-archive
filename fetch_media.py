@@ -33,7 +33,7 @@ def _download_image(url: str) -> int:
             logging.debug(f"Saving image to {file_path}")
             with open(file_path, "wb") as file:
                 file.write(response.content)
-            logger.info(f"Downloaded image from {url}")
+            logger.debug(f"Downloaded image from {url}")
             return 200
         elif response.status_code == 429:
             logger.warning(f"Rate limited when downloading image from {url}")
@@ -81,7 +81,7 @@ def download_user_media(did: str):
         # ensure the did is for a user being archived
         image_owner_did = url.split("/")[6]
         if not os.path.exists(f"user_data/{image_owner_did}"):
-            logger.info(f"Image owner DID {image_owner_did} not found in archive, skipping download for {url}.")
+            logger.debug(f"Image owner DID {image_owner_did} not found in archive, skipping download for {url}.")
             _remove_url_from_download_list(download_list_file, url)
             continue
         # make sure the image isn't already downloaded

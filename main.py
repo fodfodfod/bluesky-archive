@@ -15,7 +15,7 @@ def main():
     # os.makedirs("user_data/testing", exist_ok=True)
 
     logger = logging.getLogger("main")
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     #set log string
     logger_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     for handler in logger.handlers:
@@ -75,6 +75,8 @@ def main():
                 fetch_media.download_user_media(did)
             except Exception as e:
                 logger.error(f"Error downloading media for user {did}: {e}")
+    
+    logger.info("Finished!")
 
 
 if __name__ == "__main__":
