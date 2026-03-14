@@ -61,10 +61,10 @@ def main():
     for did in os.listdir("user_data"):
         if os.path.isdir(f"user_data/{did}"):
             try:
-                logger.debug(f"Processing user: {did}")
+                logger.debug(f"Processing user: {did}, {util.did_to_username(did)}")
                 fetch_posts.process_user(did)
             except Exception as e:
-                logger.error(f"Error processing user {did}: {e}")
+                logger.error(f"Error processing user {did}, {util.did_to_username(did)}: {e}")
     
     logger.info("Users post fetching complete.")
     logger.info("Fetching media files...")
@@ -74,7 +74,7 @@ def main():
             try:
                 fetch_media.download_user_media(did)
             except Exception as e:
-                logger.error(f"Error downloading media for user {did}: {e}")
+                logger.error(f"Error downloading media for user {did}, {util.did_to_username(did)}: {e}")
     
     logger.info("Finished!")
 

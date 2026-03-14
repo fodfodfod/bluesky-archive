@@ -24,7 +24,7 @@ def ensure_did(name: str) -> str:
 
 def did_to_username(did: str, local_only: bool = True) -> str:
     """
-    Convert a DID to a username. If local_only is True, only return the local part of the DID.
+    Convert a DID to a username. If local_only is True, do not query the API and only use cached data.
     
     :param did: The DID to convert
     :param local_only: Whether to only use cached data or fetch from the API
@@ -33,7 +33,7 @@ def did_to_username(did: str, local_only: bool = True) -> str:
     logger = logging.getLogger("main")
     try:
         with open(f"user_data/{did}/user_info.json", "r") as file:
-            data = json.load(file)[0] # everytime profile data is pulled the new data it put at index 0
+            data = json.load(file)[0] # everytime profile data is pulled the new data is put at index 0
             handle = data["handle"]
             return handle
     except:
