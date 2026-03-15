@@ -69,13 +69,13 @@ def download_user_media(did: str):
     logger = logging.getLogger("main")
     download_list_file = f"user_data/{did}/download_list.txt"
     if not os.path.exists(download_list_file):
-        logger.info(f"No download list found for user {did}, {util.get_user_name(did)}, skipping media download.")
+        logger.info(f"No download list found for user {did}, {util.did_to_username(did)}, skipping media download.")
         return
     
     with open(download_list_file, "r") as file:
         urls = [line.strip() for line in file if line.strip()]
     
-    logger.info(f"Starting media download for user {did}, {util.get_user_name(did)}, {len(urls)} files to download.")
+    logger.info(f"Starting media download for user {did}, {util.did_to_username(did)}, {len(urls)} files to download.")
     
     max_retries = 5
     for url in urls:
@@ -115,4 +115,4 @@ def download_user_media(did: str):
             
 
     
-    logger.info(f"Completed media download for user {did}, {util.get_user_name(did)}.")
+    logger.info(f"Completed media download for user {did}, {util.did_to_username(did)}.")
