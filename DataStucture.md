@@ -94,4 +94,4 @@ user_data.json stores extra info about a user. It pulls from [app.bsky.actor.get
 ## add_list.txt
 add_list.txt is a list of users to add to the archiver. Each line should be one user, either a did or handle. Comment lines start with `#`
 ## download_list.txt
-download_list.txt contains that images that need to be download for that user
+download_list.txt contains that images that need to be download from a user's posts. It includes images owned by others which will not be downloaded if the other user is not part of the archive. It also may include images which were already downloaded from another post / repost by another user in the archive. 
